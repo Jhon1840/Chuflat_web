@@ -66,7 +66,7 @@ export default function HomePage() {
               </Button>
               <Button size="lg" className="bg-white text-red-500 hover:bg-gray-200">
                 <Link href="/merchandise">Shop Merch</Link>
-              </Button>
+              </Button> 
             </div>
           </div>
         </div>

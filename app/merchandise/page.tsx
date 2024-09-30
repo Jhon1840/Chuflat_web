@@ -75,7 +75,7 @@ export default function MerchandisePage() {
       {/* Header */}
       <header className="bg-black py-4 sticky top-0 z-10 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-red-500 hover:text-red-400 transition-colors">CHUFLAY</Link>
+          <Link href="/" className="text-2xl font-bold text-red-500 hover:text-red-400 transition-colors"></Link>
           <button 
             className="bg-red-500 hover:bg-red-600 rounded-full p-2 relative transition-colors"
             onClick={toggleCart}
@@ -93,10 +93,7 @@ export default function MerchandisePage() {
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <Link href="/" className="text-red-500 hover:text-red-400 flex items-center transition-colors">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
+          
         </div>
 
         <h1 className="text-5xl font-bold mb-8 text-center">Chuflay Merchandise</h1>
