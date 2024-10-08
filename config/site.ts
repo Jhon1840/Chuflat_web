@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Chulfay",
+  description: "pagina web de chuflay",
   navItems: [
     {
       label: "Home",
@@ -10,50 +10,53 @@ export const siteConfig = {
     },
     {
       label: "Merchandise",
-      href: "/merchandise",
+      href: "/pages/merchandise",
     },
    
+    
     {
       label: "Blog",
-      href: "/blog",
+      href: "/pages/blog",
     },
+
     {
-      label: "About",
-      href: "/about",
+      label: "Admin Panel",
+      href: "/pages/admin_panel",
+    },
+
+    {
+      label: "Login",
+      href: "/pages/auth/login",
     },
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Home",
+      href: "/",
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Merchandise",
+      href: "/pages/merchandise",
     },
+    
     {
-      label: "Projects",
-      href: "/projects",
+      label: "Login",
+      href: "/pages/login",
     },
+    
     {
-      label: "Team",
-      href: "/team",
+      label: "Blog",
+      href: "/pages/blog",
     },
+
     {
-      label: "Calendar",
-      href: "/calendar",
+      label: "Admin Panel",
+      href: "/pages/admin_panel",
     },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
+
     {
       label: "Logout",
-      href: "/logout",
+      href: "/pages/admin_panel",
     },
   ],
   links: {

@@ -1,33 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ShoppingCart, ArrowLeft, X, Trash2 } from "lucide-react"
 
 type Product = {
   id: number
-  name: string
-  price: number
-  image: string
-  description: string
+  nombre: string
+  precio: string
+  codigo: string
+  existencia: number
 }
 
 type CartItem = Product & { quantity: number }
 
-const products: Product[] = [
-  { id: 1, name: "Electric Dreams T-Shirt", price: 25, image: "/placeholder.svg?height=300&width=300", description: "Show off your Chuflay fandom with this electrifying t-shirt featuring our 'Electric Dreams' album artwork." },
-  { id: 2, name: "Chuflay Logo Hoodie", price: 45, image: "/placeholder.svg?height=300&width=300", description: "Stay warm and stylish with our premium hoodie featuring the iconic Chuflay logo." },
-  { id: 3, name: "Signed Poster", price: 20, image: "/placeholder.svg?height=300&width=300", description: "A limited edition poster signed by all members of Chuflay. A must-have for any true fan!" },
-  { id: 4, name: "Chuflay Guitar Pick Set", price: 10, image: "/placeholder.svg?height=300&width=300", description: "Play like your Chuflay heroes with this set of custom guitar picks." },
-  { id: 5, name: "Neon Nights Vinyl", price: 30, image: "/placeholder.svg?height=300&width=300", description: "Experience our 'Neon Nights' album in high-fidelity vinyl format." },
-  { id: 6, name: "Tour Snapback Cap", price: 22, image: "/placeholder.svg?height=300&width=300", description: "Rep Chuflay on the streets with our stylish tour snapback cap." },
-]
-
 export default function MerchandisePage() {
+  const [products, setProducts] = useState<Product[]>([])
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/productos')
+        if (!response.ok) {
+          throw new Error('Failed to fetch products')
+        }
+        const data = await response.json()
+        setProducts(data)
+        setIsLoading(false)
+      } catch (error) {
+        setError('Error al cargar productos. Por favor vuelvelo a intentar.')
+        setIsLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   const addToCart = (product: Product) => {
     setCartItems(prevItems => {
@@ -56,7 +69,7 @@ export default function MerchandisePage() {
 
   const getTotalItems = () => cartItems.reduce((total, item) => total + item.quantity, 0)
 
-  const getTotalPrice = () => cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+  const getTotalPrice = () => cartItems.reduce((total, item) => total + parseFloat(item.precio) * item.quantity, 0)
 
   const openModal = (product: Product) => {
     setSelectedProduct(product)
@@ -70,12 +83,20 @@ export default function MerchandisePage() {
     setIsCartOpen(!isCartOpen)
   }
 
+  if (isLoading) {
+    return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">{error}</div>
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
       <header className="bg-black py-4 sticky top-0 z-10 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-red-500 hover:text-red-400 transition-colors"></Link>
+          <Link href="/" className="text-2xl font-bold text-red-500 hover:text-red-400 transition-colors">CHUFLAY</Link>
           <button 
             className="bg-red-500 hover:bg-red-600 rounded-full p-2 relative transition-colors"
             onClick={toggleCart}
@@ -93,7 +114,10 @@ export default function MerchandisePage() {
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8">
-          
+          <Link href="/" className="text-red-500 hover:text-red-400 flex items-center transition-colors">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Link>
         </div>
 
         <h1 className="text-5xl font-bold mb-8 text-center">Chuflay Merchandise</h1>
@@ -125,11 +149,11 @@ export default function MerchandisePage() {
           {products.map((product) => (
             <div key={product.id} className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden shadow-lg transform transition duration-300 hover:scale-105">
               <div className="aspect-w-1 aspect-h-1 cursor-pointer" onClick={() => openModal(product)}>
-                <Image src={product.image} alt={product.name} width={300} height={300} className="w-full h-full object-cover" />
+                <Image src="/placeholder.svg?height=300&width=300" alt={product.nombre} width={300} height={300} className="w-full h-full object-cover" />
               </div>
               <div className="p-4">
-                <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                <p className="text-red-400 text-lg font-bold mb-4">${product.price.toFixed(2)}</p>
+                <h3 className="text-xl font-semibold mb-2">{product.nombre}</h3>
+                <p className="text-red-400 text-lg font-bold mb-4">${parseFloat(product.precio).toFixed(2)}</p>
                 <button 
                   className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
                   onClick={() => addToCart(product)}
@@ -161,7 +185,7 @@ export default function MerchandisePage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-800 rounded-lg max-w-lg w-full">
             <div className="relative">
-              <Image src={selectedProduct.image} alt={selectedProduct.name} width={300} height={300} className="w-full h-64 object-cover rounded-t-lg" />
+              <Image src="/placeholder.svg?height=300&width=300" alt={selectedProduct.nombre} width={300} height={300} className="w-full h-64 object-cover rounded-t-lg" />
               <button 
                 onClick={closeModal}
                 className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
@@ -170,9 +194,10 @@ export default function MerchandisePage() {
               </button>
             </div>
             <div className="p-4">
-              <h3 className="text-2xl font-bold mb-2">{selectedProduct.name}</h3>
-              <p className="text-red-400 text-xl font-bold mb-4">${selectedProduct.price.toFixed(2)}</p>
-              <p className="text-gray-300 mb-4">{selectedProduct.description}</p>
+              <h3 className="text-2xl font-bold mb-2">{selectedProduct.nombre}</h3>
+              <p className="text-red-400 text-xl font-bold mb-4">${parseFloat(selectedProduct.precio).toFixed(2)}</p>
+              <p className="text-gray-300 mb-4">Code: {selectedProduct.codigo}</p>
+              <p className="text-gray-300 mb-4">In stock: {selectedProduct.existencia}</p>
               <button 
                 className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
                 onClick={() => { addToCart(selectedProduct); closeModal(); }}
@@ -199,10 +224,10 @@ export default function MerchandisePage() {
             ) : (
               cartItems.map(item => (
                 <div key={item.id} className="flex items-center mb-4 bg-gray-700 p-2 rounded-lg">
-                  <Image src={item.image} alt={item.name} width={64} height={64} className="w-16 h-16 object-cover rounded mr-4" />
+                  <Image src="/placeholder.svg?height=64&width=64" alt={item.nombre} width={64} height={64} className="w-16 h-16 object-cover rounded mr-4" />
                   <div className="flex-grow">
-                    <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-sm text-gray-400">${item.price.toFixed(2)}</p>
+                    <h3 className="font-semibold">{item.nombre}</h3>
+                    <p className="text-sm text-gray-400">${parseFloat(item.precio).toFixed(2)}</p>
                     <div className="flex items-center mt-2">
                       <button 
                         className="bg-gray-600 text-white px-2 py-1 rounded"

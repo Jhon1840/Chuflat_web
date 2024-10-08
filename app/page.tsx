@@ -5,12 +5,16 @@ import { PlayCircle, PauseCircle, SkipForward, SkipBack, Volume2, Badge, Mail } 
 import Link from "next/link"
 import Image from "next/image"
 import { Input } from "@/app/components/ui/input"
-import { Carousel, CarouselContent, CarouselItem } from "@/app/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/app/components/ui/carousel"
 import useEmblaCarousel from "embla-carousel-react"
 import { useState, useEffect, useCallback } from 'react'
 
+import ImagePlaceholder from "./components/ui/ImagePlaceholder"
+
 
 const carouselImages = [
+  "/img/chuflayl.jpg",
+  "/img/chuflayl.jpg",
   "/img/chuflayl.jpg",
   "/img/chuflayl.jpg",
   "/img/chuflayl.jpg",
@@ -28,7 +32,7 @@ export default function HomePage() {
     if (emblaApi) {
       const intervalId = setInterval(() => {
         scrollNext()
-      }, 5000)
+      }, 1000)
 
       return () => clearInterval(intervalId)
     }
@@ -37,25 +41,28 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <section className="relative h-screen">
-        <Carousel ref={emblaRef} className="w-full h-full">
+      <Carousel ref={emblaRef} className="w-full h-full overflow-hidden">
           <CarouselContent>
             {carouselImages.map((image, index) => (
               <CarouselItem key={index} className="w-full h-full">
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-64">
                   <Image
                     src={image}
-                    alt={`Chuflay band photo ${index + 1}`}
+                    alt={`Rock band image ${index + 1}`}
                     layout="fill"
                     objectFit="cover"
+                    objectPosition="center"
                     priority={index === 0}
                   />
-                  <div className="absolute inset-0 bg-black opacity-50"></div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex" />
+          <CarouselNext className="hidden sm:flex" />
         </Carousel>
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
           <div className="text-center">
             <h1 className="text-7xl font-extrabold mb-4 text-red-500">CHUFLAY</h1>
             <p className="text-2xl mb-8">Igniting Stages Since 2015</p>
@@ -66,7 +73,7 @@ export default function HomePage() {
               </Button>
               <Button size="lg" className="bg-white text-red-500 hover:bg-gray-200">
                 <Link href="/merchandise">Shop Merch</Link>
-              </Button> 
+              </Button>
             </div>
           </div>
         </div>
